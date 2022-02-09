@@ -850,8 +850,8 @@ xhints(void)
     sizeh->width = win.w;
     //sizeh->height_inc = win.ch;
     //sizeh->width_inc = win.cw;
-	sizeh->height_inc = 1;
-	sizeh->width_inc = 1;
+    sizeh->height_inc = 1;
+    sizeh->width_inc = 1;
     sizeh->base_height = 2 * borderpx;
     sizeh->base_width = 2 * borderpx;
     sizeh->min_height = win.ch + 2 * borderpx;
@@ -1134,8 +1134,8 @@ xinit(int cols, int rows)
 
     //win.w = 2 * borderpx + cols * win.cw;
     //win.h = 2 * borderpx + rows * win.ch;
-	win.w = 2 * win.hborderpx + cols * win.cw;
-	win.h = 2 * win.vborderpx + rows * win.ch;
+    win.w = 2 * win.hborderpx + cols * win.cw;
+    win.h = 2 * win.vborderpx + rows * win.ch;
     if (xw.gm & XNegative)
         xw.l += DisplayWidth(xw.dpy, xw.scr) - win.w - 2;
     if (xw.gm & YNegative)
@@ -1225,7 +1225,7 @@ int
 xmakeglyphfontspecs(XftGlyphFontSpec *specs, const Glyph *glyphs, int len, int x, int y)
 {
     //float winx = borderpx + x * win.cw, winy = borderpx + y * win.ch, xp, yp;
-   	float winx = win.hborderpx + x * win.cw, winy = win.vborderpx + y * win.ch, xp, yp;
+    float winx = win.hborderpx + x * win.cw, winy = win.vborderpx + y * win.ch, xp, yp;
     ushort mode, prevmode = USHRT_MAX;
     Font *font = &dc.font;
     int frcflags = FRC_NORMAL;
@@ -1359,7 +1359,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 {
     int charlen = len * ((base.mode & ATTR_WIDE) ? 2 : 1);
     //int winx = borderpx + x * win.cw, winy = borderpx + y * win.ch,
-	int winx = win.hborderpx + x * win.cw, winy = win.vborderpx + y * win.ch,
+    int winx = win.hborderpx + x * win.cw, winy = win.vborderpx + y * win.ch,
         width = charlen * win.cw;
     Color *fg, *bg, *temp, revfg, revbg, truefg, truebg;
     XRenderColor colfg, colbg;
@@ -1450,7 +1450,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
     /* Intelligent cleaning up of the borders. */
     if (x == 0) {
         //xclear(0, (y == 0)? 0 : winy, borderpx,
-   		xclear(0, (y == 0)? 0 : winy, win.vborderpx,
+        xclear(0, (y == 0)? 0 : winy, win.vborderpx,
             winy + win.ch +
             //((winy + win.ch >= borderpx + win.th)? win.h : 0));
             ((winy + win.ch >= win.vborderpx + win.th)? win.h : 0));
@@ -1620,8 +1620,9 @@ xseticontitle(char *p)
     XTextProperty prop;
     DEFAULT(p, opt_title);
 
-    Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
-            &prop);
+    if (Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
+                                    &prop) != Success)
+        return;
     XSetWMIconName(xw.dpy, xw.win, &prop);
     XSetTextProperty(xw.dpy, xw.win, &prop, xw.netwmiconname);
     XFree(prop.value);
@@ -1633,8 +1634,9 @@ xsettitle(char *p)
     XTextProperty prop;
     DEFAULT(p, opt_title);
 
-    Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
-            &prop);
+    if (Xutf8TextListToTextProperty(xw.dpy, &p, 1, XUTF8StringStyle,
+                                    &prop) != Success)
+        return;
     XSetWMName(xw.dpy, xw.win, &prop);
     XSetTextProperty(xw.dpy, xw.win, &prop, xw.netwmname);
     XFree(prop.value);
